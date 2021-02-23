@@ -142,10 +142,6 @@ def yahoo_list(keyword_):
     
     return lst
 
-@app.route('/good')
-def good():
-    return json.dumps(players)
-
 # test
 @app.route('/test', method="POST")
 def test():
