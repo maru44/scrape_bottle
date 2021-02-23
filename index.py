@@ -167,8 +167,8 @@ def glo():
 def index():
     return json.dumps(players)
 
-if __name__ == "__main__":
-    if os.environ.get('LOCATION') == 'heroku':
-        run(app=app, host="0.0.0.0", port=5000)
-    else:
-        run(app=app, host="localhost", port=8000, quiet=False, reloader=True)
+
+if os.environ.get('LOCATION') == 'heroku':
+    run(app=app, host="0.0.0.0", port=5000)
+else:
+    run(app=app, host="localhost", port=8000, quiet=False, reloader=True)
