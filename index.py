@@ -27,7 +27,7 @@ SC_HEADERS = {
 
 # origins
 MERCARI = "https://www.mercari.com"
-RAKUMA = "https://frill.jp"
+RAKUMA = "https://fril.jp"
 
 ###########################
 #          func           #
@@ -66,7 +66,7 @@ def mer_scrape(url_):
 def rak_scrape(url_):
     lst = []
 
-    info = requests.get(url_, headers=SC_HEADERS, verify=False)
+    info = requests.get(url_, headers=SC_HEADERS)
     soup = BeautifulSoup(info.text, 'html.parser')
 
     for item in soup.select(".item-box__text-wrapper", limit=20):
@@ -78,7 +78,7 @@ def rak_scrape(url_):
         link = a_.get("href")
         
         price_p = item.select("p", class_="item-box__item-price")[1]
-        price_span = price_p.select("span")[1].string
+        price = price_p.select("span")[1].string
         
         make_list_dict(lst, link, name, price)
     
