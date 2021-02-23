@@ -1,4 +1,5 @@
-import requests, json, urllib, os
+import os
+import requests, json, urllib
 from bs4 import BeautifulSoup
 
 """ bottle """
