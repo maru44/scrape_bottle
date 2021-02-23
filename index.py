@@ -160,7 +160,7 @@ def glo():
     
     dict_ = {
         "mercari": mer_list(keyword),
-        #"rakuma": rakuma_list(keyword),
+        "rakuma": rakuma_list(keyword),
         "yahoo": yahoo_list(keyword),
     }
 
