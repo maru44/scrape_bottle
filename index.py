@@ -66,7 +66,11 @@ def mer_scrape(url_):
 def rak_scrape(url_):
     lst = []
 
-    info = requests.get(url_, headers=SC_HEADERS)
+    headers = {
+        "User-Agent": "Mozilla/.... Chrome/.... Safari/...."
+    }
+
+    info = requests.get(url_, headers=headers)
     soup = BeautifulSoup(info.text, 'html.parser')
 
     for item in soup.select(".item-box__text-wrapper", limit=20):
