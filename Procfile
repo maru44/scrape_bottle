@@ -1,1 +1,1 @@
-web: python3 indes.py
+web: python3 index.py
