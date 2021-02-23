@@ -60,7 +60,8 @@ def mer_scrape(url_):
 
         make_list_dict(lst, merlink, name, price)
 
-    return json.dumps(lst, ensure_ascii=False)
+    #return json.dumps(lst, ensure_ascii=False)
+    return lst
 
 def rak_scrape(url_):
     lst = []
@@ -81,7 +82,8 @@ def rak_scrape(url_):
         
         make_list_dict(lst, link, name, price)
     
-    return json.dumps(lst, ensure_ascii=False)
+    #return json.dumps(lst, ensure_ascii=False)
+    return lst
 
 def yahoo_scrape(url_):
     lst = []
@@ -99,7 +101,8 @@ def yahoo_scrape(url_):
         
         make_list_dict(lst, link, name, price)
         
-    return json.dumps(lst, ensure_ascii=False)
+    #return json.dumps(lst, ensure_ascii=False)
+    return lst
 
 
 ###########################
