@@ -214,8 +214,8 @@ def glo():
     narrowdown = body["narrowdown"]
     
     dict_ = {
-        "mercari": mer_list(keyword, narrowdown),
-        "rakuma": rakuma_list(keyword, narrowdown),
+        "mercari": mer_list(keyword, **narrowdown),
+        "rakuma": rakuma_list(keyword, **narrowdown),
         "yahoo": yahoo_list(keyword),
     }
 
