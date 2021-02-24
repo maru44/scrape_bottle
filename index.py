@@ -90,7 +90,7 @@ def mer_scrape(url_):
     info = requests.get(url_, headers=SC_HEADERS)
     soup = BeautifulSoup(info.text, 'html.parser')
 
-    for item in soup.select("section > a", limit=20):
+    for item in soup.select("section > a", limit=50):
 
         link = item.get("href")
         link = str(link)
@@ -114,7 +114,7 @@ def rak_scrape(url_):
     info = requests.get(url_, headers=SC_HEADERS)
     soup = BeautifulSoup(info.text, 'html.parser')
 
-    for item in soup.select(".item-box", limit=20):
+    for item in soup.select(".item-box", limit=50):
         dict_ = {}
         
         p_ = item.select("p", class_=".item-box__item-name")[0]
