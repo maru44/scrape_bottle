@@ -29,15 +29,56 @@ SC_HEADERS = {
 MERCARI = "https://www.mercari.com"
 RAKUMA = "https://fril.jp"
 
+MER_CAT = ["-", "1-", "2-", "3-", "4-", "5-", "1328-", "6-", "1328-79", "1027", "7", "8", "1318", "9", "10-112", "10-929", "10-929", "10"]
+
+RAK_CAT = ["", "10001", "10005", "10003", "10009", "10007", "10004", "10013", "10008", "10006", "10014", "10011", "10010", "1125", "1126", "1510", "10002"]
+
+MER_SOLD = ["", "status_trading_sold_out=1", "status_on_sale=1"]
+
+RAK_SOLD = ["", "&transaction=soldout", "&transaction=selling"]
+
+###########################
+#      generate param     #
+###########################
+
+def mer_params(**kwargs):
+    
+    cat = int(kwargs.get("category"))
+    sold = int(kwargs.get("sold"))
+    
+    cat_list = MER_CAT[cat].split("-")
+    
+    narrow = {
+        "category_root": cat_list[0],
+        "category_child": cat_list[1],
+        "is_sold": MER_SOLD[sold],
+    }
+    
+    return narrow
+    
+    
+def rak_params(**kwargs):
+    
+    cat = int(kwargs.get("category"))
+    sold = int(kwargs.get("sold"))
+    
+    narrow = {
+        "category_id": RAK_CAT[cat],
+        "transaction": RAK_SOLD[sold],
+    }
+    
+    return narrow
+
 ###########################
 #          func           #
 ###########################
 
-def make_list_dict(lst_obj, link_str, name_str, price_str):
+def make_list_dict(lst_obj, link_str, name_str, price_str, sold):
     dict_ = {
         "href": link_str,
         "name": name_str,
         "price": price_str,
+        "sold": sold,
     }
 
     lst_obj.append(dict_)
@@ -56,9 +97,13 @@ def mer_scrape(url_):
         name = item.find(class_="items-box-name").string
         price = item.find(class_="items-box-price").string
 
+        sold = False
+        if item.find(class_="item-sold-out-badge") is not None:
+            sold = True
+
         merlink = MERCARI + link
 
-        make_list_dict(lst, merlink, name, price)
+        make_list_dict(lst, merlink, name, price, sold)
 
     #return json.dumps(lst, ensure_ascii=False)
     return lst
@@ -69,7 +114,7 @@ def rak_scrape(url_):
     info = requests.get(url_, headers=SC_HEADERS)
     soup = BeautifulSoup(info.text, 'html.parser')
 
-    for item in soup.select(".item-box__text-wrapper", limit=20):
+    for item in soup.select(".item-box", limit=20):
         dict_ = {}
         
         p_ = item.select("p", class_=".item-box__item-name")[0]
@@ -79,8 +124,12 @@ def rak_scrape(url_):
         
         price_p = item.select("p", class_="item-box__item-price")[1]
         price = price_p.select("span")[1].string
+
+        sold = False
+        if item.find(class_="item-box__soldout_ribbon") is not None:
+            sold = True
         
-        make_list_dict(lst, link, name, price)
+        make_list_dict(lst, link, name, price, sold)
     
     #return json.dumps(lst, ensure_ascii=False)
     return lst
@@ -99,7 +148,7 @@ def yahoo_scrape(url_):
         price_el = item.select(".Product__priceValue")[0]
         price = price_el.string
         
-        make_list_dict(lst, link, name, price)
+        make_list_dict(lst, link, name, price, sold=False)
         
     #return json.dumps(lst, ensure_ascii=False)
     return lst
@@ -111,23 +160,32 @@ def yahoo_scrape(url_):
 
 # generate mercari list
 @app.route('/mer/<keyword_>')
-def mer_list(keyword_):
+def mer_list(keyword_, **kwargs):
     keyword = urllib.parse.quote(keyword_)
     # spaceを+に変換
     keyword = keyword.replace('%20', '+')
 
-    target_url = "".join([MERCARI, '/jp/search/', '?keyword=', keyword])
+    # narrow down dict
+    narrow = mer_params(**kwargs)
+
+    target_url = f'{MERCARI}/jp/search/?sort_order=&keyword={keyword}&category_root={narrow["category_root"]}&category_child={narrow["category_child"]}&brand_name=&brand_id=&size_group=&price_min=&price_max=&{narrow["is_sold"]}'
 
     lst = mer_scrape(target_url)
+
     return lst
 
 # generate rakuma list
 @app.route('/rak/<keyword_>')
-def rakuma_list(keyword_):
+def rakuma_list(keyword_, **kwargs):
     keyword = urllib.parse.quote(keyword_)
-    target_url = "".join([RAKUMA, '/search/', keyword])
+    
+    # narrow down dict
+    narrow = rak_params(**kwargs)
+    
+    target_url = f'{RAKUMA}/s?query={keyword}&category_id={narrow["category_id"]}{narrow["transaction"]}'
     
     lst = rak_scrape(target_url)
+
     return lst
 
 # general yahoo list
@@ -153,10 +211,11 @@ def test():
 def glo():
     body = json.load(request.body)
     keyword = body["keyword"]
+    narrowdown = body["narrowdown"]
     
     dict_ = {
-        "mercari": mer_list(keyword),
-        "rakuma": rakuma_list(keyword),
+        "mercari": mer_list(keyword, narrowdown),
+        "rakuma": rakuma_list(keyword, narrowdown),
         "yahoo": yahoo_list(keyword),
     }
 
