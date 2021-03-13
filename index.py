@@ -90,12 +90,16 @@ def mer_scrape(url_):
     info = requests.get(url_, headers=SC_HEADERS)
     soup = BeautifulSoup(info.text, 'html.parser')
 
+    # <section class="item-box"><a> を走査
     for item in soup.select("section > a", limit=50):
 
         link = item.get("href")
         link = str(link)
         name = item.find(class_="items-box-name").string
         price = item.find(class_="items-box-price").string
+        
+        image_fig = item.find(class_="items-box-photo")
+        image = image_fig.find(img).get("data-src")
 
         sold = False
         if item.find(class_="item-sold-out-badge") is not None:
@@ -103,7 +107,7 @@ def mer_scrape(url_):
 
         merlink = MERCARI + link
 
-        make_list_dict(lst, merlink, name, price, sold)
+        make_list_dict(lst, merlink, name, price, sold, image)
 
     #return json.dumps(lst, ensure_ascii=False)
     return lst
@@ -125,11 +129,14 @@ def rak_scrape(url_):
         price_p = item.select("p", class_="item-box__item-price")[1]
         price = price_p.select("span")[1].string
 
+        image_div = ite.find(class_="item_box__image-wrapper")
+        image = image_div.find("img").get("src")
+
         sold = False
         if item.find(class_="item-box__soldout_ribbon") is not None:
             sold = True
         
-        make_list_dict(lst, link, name, price, sold)
+        make_list_dict(lst, link, name, price, sold, image)
     
     #return json.dumps(lst, ensure_ascii=False)
     return lst
@@ -141,14 +148,20 @@ def yahoo_scrape(url_):
     
     soup = BeautifulSoup(info.text, 'html.parser')
     
-    for item in soup.select(".Product__detail", limit=20):
+    for product in soup.select("Product", limit=50):
+        item = product.find(class_="Product__detail")
+
         det = item.select(".Product__titleLink")[0]
         link = det.get("href")
         name = det.string
+
         price_el = item.select(".Product__priceValue")[0]
         price = price_el.string
+
+        image_el = product.find(class_="Product__image")
+        image = image_el.find("image").get("src")
         
-        make_list_dict(lst, link, name, price, sold=False)
+        make_list_dict(lst, link, name, price, sold=False, image)
         
     #return json.dumps(lst, ensure_ascii=False)
     return lst
