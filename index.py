@@ -150,7 +150,7 @@ def yahoo_scrape(url_):
     
     soup = BeautifulSoup(info.text, 'html.parser')
     
-    for product in soup.select("Product", limit=50):
+    for product in soup.select(".Product", limit=50):
         item = product.find(class_="Product__detail")
 
         det = item.select(".Product__titleLink")[0]
@@ -161,7 +161,7 @@ def yahoo_scrape(url_):
         price = price_el.string
 
         image_el = product.find(class_="Product__image")
-        image = image_el.find("image").get("src")
+        image = image_el.find("img").get("src")
 
         sold = False
         
