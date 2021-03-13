@@ -73,12 +73,13 @@ def rak_params(**kwargs):
 #          func           #
 ###########################
 
-def make_list_dict(lst_obj, link_str, name_str, price_str, sold):
+def make_list_dict(lst_obj, link_str, name_str, price_str, sold, image):
     dict_ = {
         "href": link_str,
         "name": name_str,
         "price": price_str,
         "sold": sold,
+        "image": image,
     }
 
     lst_obj.append(dict_)
