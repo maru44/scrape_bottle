@@ -100,7 +100,7 @@ def mer_scrape(url_):
         price = item.find(class_="items-box-price").string
         
         image_fig = item.find(class_="items-box-photo")
-        image = image_fig.find(img).get("data-src")
+        image = image_fig.find("img").get("data-src")
 
         sold = False
         if item.find(class_="item-sold-out-badge") is not None:
@@ -130,8 +130,9 @@ def rak_scrape(url_):
         price_p = item.select("p", class_="item-box__item-price")[1]
         price = price_p.select("span")[1].string
 
-        image_div = ite.find(class_="item_box__image-wrapper")
-        image = image_div.find("img").get("src")
+        image_div = item.find(class_="item-box__image-wrapper")
+        # image = image_div.find("img").get("src")
+        image = image_div.find("meta").get("content")
 
         sold = False
         if item.find(class_="item-box__soldout_ribbon") is not None:
@@ -245,4 +246,4 @@ if __name__ == "__main__":
     if os.environ.get('LOCATION') == 'heroku':
         run(app=app, host="0.0.0.0", port=5000)
     else:
-        run(app=app, host="localhost", port=8000, quiet=False, reloader=True)
+        run(app=app, host="localhost", port=7000, quiet=False, reloader=True)
