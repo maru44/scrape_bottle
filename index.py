@@ -160,8 +160,10 @@ def yahoo_scrape(url_):
 
         image_el = product.find(class_="Product__image")
         image = image_el.find("image").get("src")
+
+        sold = False
         
-        make_list_dict(lst, link, name, price, sold=False, image)
+        make_list_dict(lst, link, name, price, sold, image)
         
     #return json.dumps(lst, ensure_ascii=False)
     return lst
