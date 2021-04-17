@@ -147,6 +147,8 @@ def mer_scrape(url_):
         link = str(link)
         name = item.find(class_="items-box-name").string
         price = item.find(class_="items-box-price").string
+        price = price.replace('\\', '')
+        price = f'{price} 円'
 
         image_fig = item.find(class_="items-box-photo")
         image = image_fig.find("img").get("data-src")
@@ -178,7 +180,7 @@ def rak_scrape(url_):
 
         price_p = item.select("p", class_="item-box__item-price")[1]
         price = price_p.select("span")[1].string
-        price = f'\\{price}'  # 円マーク先頭に
+        price = f'{price} 円'  # 円マーク先頭に
 
         image_div = item.find(class_="item-box__image-wrapper")
         # image = image_div.find("img").get("src")
@@ -211,7 +213,7 @@ def yahoo_scrape(url_):
         price_el = item.select(".Product__priceValue")[0]
         price = price_el.string
         price = price.replace('円', '')
-        price = f'\\{price}'  # 円マーク先頭に
+        price = f'{price} 円'  # 円マーク先頭に
 
         image_el = product.find(class_="Product__image")
         image = image_el.find("img").get("src")
