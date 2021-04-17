@@ -1,5 +1,7 @@
 import os
-import requests, json, urllib
+import requests
+import json
+import urllib
 from bs4 import BeautifulSoup
 
 """ bottle """
@@ -168,7 +170,6 @@ def rak_scrape(url_):
     soup = BeautifulSoup(info.text, "html.parser")
 
     for item in soup.select(".item-box", limit=50):
-        dict_ = {}
 
         p_ = item.select("p", class_=".item-box__item-name")[0]
         a_ = p_.select("a")[0]
@@ -177,6 +178,7 @@ def rak_scrape(url_):
 
         price_p = item.select("p", class_="item-box__item-price")[1]
         price = price_p.select("span")[1].string
+        price = f'\\{price}'  # 円マーク先頭に
 
         image_div = item.find(class_="item-box__image-wrapper")
         # image = image_div.find("img").get("src")
@@ -208,6 +210,8 @@ def yahoo_scrape(url_):
 
         price_el = item.select(".Product__priceValue")[0]
         price = price_el.string
+        price = price.replace('円', '')
+        price = f'\\{price}'  # 円マーク先頭に
 
         image_el = product.find(class_="Product__image")
         image = image_el.find("img").get("src")
